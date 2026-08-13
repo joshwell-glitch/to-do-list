@@ -96,22 +96,27 @@ class App(ctk.CTk):
     def delete_tasks(self):
         print("Deleting Tasks!")
 
+    # handle settings function handles the input when opening the settings.
     def handle_settings(self):
         if self.settings_button._text == 'Settings':
             self.open_settings()
         else:
             self.close_settings()
 
+    # open settings when input is detected.
     def open_settings(self):
+        # settings frame
         self.settings_frame = ctk.CTkFrame(master=self.window, 
                                            height=400, 
                                            width=250)
         self.settings_frame.place(relx=0.5, 
                                   rely=0.5, 
                                   anchor='center')
+        # configures the settings_button after input.
         self.settings_button.configure(text='Main Menu')
         self.settings_button.place_configure(relx=0.800)
 
+        # settings_label.
         self.settings_label = ctk.CTkLabel(master=self.settings_frame, 
                                            text='Settings', 
                                            font=("Arial", 24, "bold"))
@@ -119,6 +124,7 @@ class App(ctk.CTk):
                                   rely=0.1, 
                                   anchor='center')
 
+        # change_theme_var is a BooleanVar() from CTkinter, it is a data type for this library.
         self.change_theme_var = ctk.BooleanVar()
         self.current_theme = ctk.get_appearance_mode()
         if self.current_theme == "Light":
@@ -126,15 +132,28 @@ class App(ctk.CTk):
         if self.current_theme == "Dark":
             self.change_theme_var.set(value=True)
 
+        #change_theme_switch is a switch for dark mode.
         self.change_theme_switch = ctk.CTkSwitch(master=self.settings_frame, 
                                                  text='Dark Mode', 
                                                  font=("Arial", 12, "bold"),
                                                  command=self.edit_theme,
                                                  variable=self.change_theme_var)
         self.change_theme_switch.place(relx=0.5, 
-                                       rely=0.5, 
+                                       rely=0.3, 
                                        anchor='center')
 
+        # change color depending on the slider.
+        self.change_color_slider = ctk.CTkSlider(master=self.settings_frame, 
+                                                 from_=0,
+                                                 to=2,
+                                                 command=self.change_color,
+                                                 number_of_steps=2)
+        self.change_color_slider.place(relx=0.5, 
+                                       rely=0.9, 
+                                       anchor='center')
+        self.change_color_slider.set(0)
+
+    # edit_theme function handles the input when you toggle the switch.
     def edit_theme(self):
         self.get_bool = self.change_theme_var.get()
         if self.get_bool == True:
@@ -144,6 +163,17 @@ class App(ctk.CTk):
             ctk.set_appearance_mode("Light")
             print('light')
 
+    # change_color is the main function of changing the color.
+    def change_color(self, value):
+        print(f"The value is: {value}")
+        if value == 0.0:
+            ctk.set_default_color_theme("blue")
+        elif value == 1.0:
+            ctk.set_default_color_theme("dark-blue")
+        elif value == 2.0:
+            ctk.set_default_color_theme("green")
+
+    # close_settings function closes the settings.
     def close_settings(self):
         self.settings_frame.place_forget()
         self.settings_button.configure(text='Settings')

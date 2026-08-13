@@ -142,7 +142,7 @@ class App(ctk.CTk):
                                        rely=0.3, 
                                        anchor='center')
 
-        # change color depending on the slider.
+        # change_color_slider changes color depending on the slider.
         self.change_color_slider = ctk.CTkSlider(master=self.settings_frame, 
                                                  from_=0,
                                                  to=2,
@@ -152,6 +152,14 @@ class App(ctk.CTk):
                                        rely=0.9, 
                                        anchor='center')
         self.change_color_slider.set(0)
+
+        # label for change_color_slider.
+        self.change_color_label = ctk.CTkLabel(master=self.settings_frame, 
+                                               text='Color', 
+                                               font=("Arial", 12, "bold"))
+        self.change_color_label.place(relx=0.5, 
+                                      rely=0.850, 
+                                      anchor='center')
 
     # edit_theme function handles the input when you toggle the switch.
     def edit_theme(self):
@@ -165,12 +173,14 @@ class App(ctk.CTk):
 
     # change_color is the main function of changing the color.
     def change_color(self, value):
-        print(f"The value is: {value}")
         if value == 0.0:
+            self.change_color_label.configure(text="Blue")
             ctk.set_default_color_theme("blue")
         elif value == 1.0:
+            self.change_color_label.configure(text="Dark Blue")
             ctk.set_default_color_theme("dark-blue")
         elif value == 2.0:
+            self.change_color_label.configure(text="Green")
             ctk.set_default_color_theme("green")
 
     # close_settings function closes the settings.

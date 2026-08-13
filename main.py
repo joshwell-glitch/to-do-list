@@ -2,6 +2,8 @@ import customtkinter as ctk
 import json
 
 SETTINGS_PATH = "data/saved_settings.json"
+ICONPATH = "asset/icon.ico"
+
 class App(ctk.CTk):
     def __init__(self):
         super().__init__()
@@ -12,6 +14,7 @@ class App(ctk.CTk):
         self.title("To-Do List")
         self.geometry("400x500")
         self.resizable(False, False)
+        self.iconbitmap(ICONPATH)
 
         # Menu Frame:
         self.frame = ctk.CTkFrame(master=self,

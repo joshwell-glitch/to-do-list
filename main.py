@@ -1,6 +1,6 @@
 import customtkinter as ctk
 
-ctk.set_appearance_mode("system")
+ctk.set_appearance_mode("System")
 ctk.set_default_color_theme("blue")
 
 class App(ctk.CTk):
@@ -112,8 +112,33 @@ class App(ctk.CTk):
         self.settings_button.configure(text='Main Menu')
         self.settings_button.place_configure(relx=0.800)
 
-        self.settings_label = ctk.CTkLabel(master=self.settings_frame, text='Settings', font=("Arial", 24, "bold"))
-        self.settings_label.place(relx=0.5, rely=0.1, anchor='center')
+        self.settings_label = ctk.CTkLabel(master=self.settings_frame, 
+                                           text='Settings', 
+                                           font=("Arial", 24, "bold"))
+        self.settings_label.place(relx=0.5, 
+                                  rely=0.1, 
+                                  anchor='center')
+
+        self.current_theme = ctk.get_appearance_mode()
+        if self.current_theme == "Light":
+            self.change_theme_var = ctk.BooleanVar(value=False)
+        else:
+            self.change_theme_var = ctk.BooleanVar(value=True)
+
+        self.change_theme_switch = ctk.CTkSwitch(master=self.settings_frame, 
+                                                 text='Dark Mode', 
+                                                 font=("Arial", 12, "bold"),
+                                                 command=self.edit_theme,
+                                                 variable=self.change_theme_var)
+        self.change_theme_switch.place(relx=0.5, 
+                                       rely=0.5, 
+                                       anchor='center')
+
+    def edit_theme(self):
+        if self.current_theme == False:
+            ctk.set_appearance_mode("Dark")
+        else:
+            ctk.set_appearance_mode("Light")
 
     def close_settings(self):
         self.settings_frame.place_forget()

@@ -2,7 +2,6 @@ import customtkinter as ctk
 import json
 
 SETTINGS_PATH = "data/saved_settings.json"
-
 class App(ctk.CTk):
     def __init__(self):
         super().__init__()
@@ -156,7 +155,7 @@ class App(ctk.CTk):
 
         # label for change_color_slider.
         self.change_color_label = ctk.CTkLabel(master=self.settings_frame, 
-                                               text=self.settings["color_theme"], 
+                                               text=self.settings["name_color"], 
                                                font=("Arial", 12, "bold"))
         self.change_color_label.place(relx=0.5, 
                                       rely=0.850, 
@@ -181,22 +180,26 @@ class App(ctk.CTk):
     def change_color(self, value):
 
         if value == 0.0:
-            self.change_color_label.configure(text="blue")
             theme = "blue"
+            color = "Blue"
             number = 0.0
+            self.change_color_label.configure(text=color)
 
         elif value == 1.0:
-            self.change_color_label.configure(text="dark-blue")
             theme = "dark-blue"
+            color = "Dark Blue"
             number = 1.0
+            self.change_color_label.configure(text=color)
 
         elif value == 2.0:
-            self.change_color_label.configure(text="green")
             theme = "green"
+            color = "Green"
             number = 2.0
+            self.change_color_label.configure(text=color)
 
         ctk.set_default_color_theme(theme)
 
+        self.settings["name_color"] = color
         self.settings["number_color"] = number
         self.settings["color_theme"] = theme
         self.save_settings(self.settings)
@@ -215,7 +218,7 @@ class App(ctk.CTk):
             with open(SETTINGS_PATH, "r") as file:
                 return json.load(file)
         except FileNotFoundError:
-            return {"appearance": "System", "color_theme": "blue", "number_color": 1}
+            return {"appearance": "System", "color_theme": "blue", "number_color": 1, "name_color": "Blue"}
 
     # save settings changes.
     def save_settings(self, data):

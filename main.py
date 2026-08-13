@@ -29,13 +29,13 @@ class App(ctk.CTk):
                          anchor='n')
 
         # Settings Button:
-        self.settings = ctk.CTkButton(master=self.window,
+        self.settings_button = ctk.CTkButton(master=self.window,
                                       text="Settings",
                                       font=("arial", 12, "bold"),
                                       height=30,
                                       width=30,
-                                      command=self.open_settings)
-        self.settings.place(relx=0.830,
+                                      command=self.handle_settings)
+        self.settings_button.place(relx=0.830,
                             rely=0.010)
 
         # Add task button:
@@ -96,9 +96,29 @@ class App(ctk.CTk):
     def delete_tasks(self):
         print("Deleting Tasks!")
 
+    def handle_settings(self):
+        if self.settings_button._text == 'Settings':
+            self.open_settings()
+        else:
+            self.close_settings()
+
     def open_settings(self):
-        self.settings_frame = ctk.CTkFrame(master=self.window, height=400, width=250)
-        self.settings_frame.place(relx=0.5, rely=0.5, anchor='center')
+        self.settings_frame = ctk.CTkFrame(master=self.window, 
+                                           height=400, 
+                                           width=250)
+        self.settings_frame.place(relx=0.5, 
+                                  rely=0.5, 
+                                  anchor='center')
+        self.settings_button.configure(text='Main Menu')
+        self.settings_button.place_configure(relx=0.800)
+
+        self.settings_label = ctk.CTkLabel(master=self.settings_frame, text='Settings', font=("Arial", 24, "bold"))
+        self.settings_label.place(relx=0.5, rely=0.1, anchor='center')
+
+    def close_settings(self):
+        self.settings_frame.place_forget()
+        self.settings_button.configure(text='Settings')
+        self.settings_button.place_configure(relx=0.840)
 
 if __name__ == "__main__":
     app = App()

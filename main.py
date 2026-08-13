@@ -39,7 +39,7 @@ class App(ctk.CTk):
                                       width=30,
                                       command=self.handle_settings)
         self.settings_button.place(relx=0.830,
-                            rely=0.010)
+                                   rely=0.010)
 
         # Add task button:
         self.add_button = ctk.CTkButton(master=self.frame,
@@ -152,11 +152,11 @@ class App(ctk.CTk):
         self.change_color_slider.place(relx=0.5, 
                                        rely=0.9, 
                                        anchor='center')
-        self.change_color_slider.set(0)
+        self.change_color_slider.set(self.settings["number_color"])
 
         # label for change_color_slider.
         self.change_color_label = ctk.CTkLabel(master=self.settings_frame, 
-                                               text='Color', 
+                                               text=self.settings["color_theme"], 
                                                font=("Arial", 12, "bold"))
         self.change_color_label.place(relx=0.5, 
                                       rely=0.850, 
@@ -175,25 +175,29 @@ class App(ctk.CTk):
         ctk.set_appearance_mode(appearance)
 
         self.settings["appearance"] = appearance
-        self.save_settings[self.settings]
+        self.save_settings(self.settings)
 
     # change_color is the main function of changing the color.
     def change_color(self, value):
 
         if value == 0.0:
-            self.change_color_label.configure(text="Blue")
-            theme = 'blue'
+            self.change_color_label.configure(text="blue")
+            theme = "blue"
+            number = 0.0
 
         elif value == 1.0:
-            self.change_color_label.configure(text="Dark Blue")
+            self.change_color_label.configure(text="dark-blue")
             theme = "dark-blue"
+            number = 1.0
 
         elif value == 2.0:
-            self.change_color_label.configure(text="Green")
+            self.change_color_label.configure(text="green")
             theme = "green"
+            number = 2.0
 
         ctk.set_default_color_theme(theme)
 
+        self.settings["number_color"] = number
         self.settings["color_theme"] = theme
         self.save_settings(self.settings)
 
@@ -211,7 +215,7 @@ class App(ctk.CTk):
             with open(SETTINGS_PATH, "r") as file:
                 return json.load(file)
         except FileNotFoundError:
-            return {"appearance": "System", "color_theme": "blue"}
+            return {"appearance": "System", "color_theme": "blue", "number_color": 1}
 
     # save settings changes.
     def save_settings(self, data):

@@ -119,11 +119,12 @@ class App(ctk.CTk):
                                   rely=0.1, 
                                   anchor='center')
 
+        self.change_theme_var = ctk.BooleanVar()
         self.current_theme = ctk.get_appearance_mode()
         if self.current_theme == "Light":
-            self.change_theme_var = ctk.BooleanVar(value=False)
-        else:
-            self.change_theme_var = ctk.BooleanVar(value=True)
+            self.change_theme_var.set(value=False)
+        if self.current_theme == "Dark":
+            self.change_theme_var.set(value=True)
 
         self.change_theme_switch = ctk.CTkSwitch(master=self.settings_frame, 
                                                  text='Dark Mode', 
@@ -135,10 +136,13 @@ class App(ctk.CTk):
                                        anchor='center')
 
     def edit_theme(self):
-        if self.current_theme == False:
+        self.get_bool = self.change_theme_var.get()
+        if self.get_bool == True:
             ctk.set_appearance_mode("Dark")
+            print('dark')
         else:
             ctk.set_appearance_mode("Light")
+            print('light')
 
     def close_settings(self):
         self.settings_frame.place_forget()

@@ -1,18 +1,21 @@
 import customtkinter as ctk
+import json
 
-ctk.set_appearance_mode("System")
-ctk.set_default_color_theme("blue")
+SETTINGS_PATH = "data/saved_settings.json"
 
 class App(ctk.CTk):
     def __init__(self):
+        super().__init__()
+        self.settings = self.load_settings()
+        ctk.set_appearance_mode(self.settings["appearance"])
+        ctk.set_default_color_theme(self.settings["color_theme"])
         # Main Window:
-        self.window = ctk.CTk()
-        self.window.title("To-Do List")
-        self.window.geometry("400x500")
-        self.window.resizable(False, False)
+        self.title("To-Do List")
+        self.geometry("400x500")
+        self.resizable(False, False)
 
         # Menu Frame:
-        self.frame = ctk.CTkFrame(master=self.window,
+        self.frame = ctk.CTkFrame(master=self,
                                   width=250,
                                   height=300)
         self.frame.place(relx=0.5,
@@ -29,7 +32,7 @@ class App(ctk.CTk):
                          anchor='n')
 
         # Settings Button:
-        self.settings_button = ctk.CTkButton(master=self.window,
+        self.settings_button = ctk.CTkButton(master=self,
                                       text="Settings",
                                       font=("arial", 12, "bold"),
                                       height=30,
@@ -75,14 +78,12 @@ class App(ctk.CTk):
                                anchor='center')
 
         #Bottom label(version):
-        self.bottom_label = ctk.CTkLabel(master=self.window, 
+        self.bottom_label = ctk.CTkLabel(master=self, 
                                          text="Version 1.0", 
                                          font=("Arial", 12, "bold"))
         self.bottom_label.pack(anchor='sw', 
                                padx=12,
                                expand=True)
-
-        self.window.mainloop()
 
     def add_task(self):
         print("Task Added!")
@@ -106,7 +107,7 @@ class App(ctk.CTk):
     # open settings when input is detected.
     def open_settings(self):
         # settings frame
-        self.settings_frame = ctk.CTkFrame(master=self.window, 
+        self.settings_frame = ctk.CTkFrame(master=self, 
                                            height=400, 
                                            width=250)
         self.settings_frame.place(relx=0.5, 
@@ -163,31 +164,61 @@ class App(ctk.CTk):
 
     # edit_theme function handles the input when you toggle the switch.
     def edit_theme(self):
-        self.get_bool = self.change_theme_var.get()
-        if self.get_bool == True:
-            ctk.set_appearance_mode("Dark")
-            print('dark')
+
+        self.change_theme_var.get()
+
+        if self.change_theme_var.get() == True:
+            appearance = "Dark"
         else:
-            ctk.set_appearance_mode("Light")
-            print('light')
+            appearance = "Light"
+
+        ctk.set_appearance_mode(appearance)
+
+        self.settings["appearance"] = appearance
+        self.save_settings[self.settings]
 
     # change_color is the main function of changing the color.
     def change_color(self, value):
+
         if value == 0.0:
             self.change_color_label.configure(text="Blue")
-            ctk.set_default_color_theme("blue")
+            theme = 'blue'
+
         elif value == 1.0:
             self.change_color_label.configure(text="Dark Blue")
-            ctk.set_default_color_theme("dark-blue")
+            theme = "dark-blue"
+
         elif value == 2.0:
             self.change_color_label.configure(text="Green")
-            ctk.set_default_color_theme("green")
+            theme = "green"
+
+        ctk.set_default_color_theme(theme)
+
+        self.settings["color_theme"] = theme
+        self.save_settings(self.settings)
 
     # close_settings function closes the settings.
     def close_settings(self):
+
         self.settings_frame.place_forget()
         self.settings_button.configure(text='Settings')
         self.settings_button.place_configure(relx=0.840)
 
+    # load settings changes.
+    def load_settings(self):
+
+        try:
+            with open(SETTINGS_PATH, "r") as file:
+                return json.load(file)
+        except FileNotFoundError:
+            return {"appearance": "System", "color_theme": "blue"}
+
+    # save settings changes.
+    def save_settings(self, data):
+
+        with open(SETTINGS_PATH, "w") as file:
+            json.dump(data, file)
+
 if __name__ == "__main__":
     app = App()
+    app.mainloop()

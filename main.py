@@ -47,7 +47,7 @@ class App(ctk.CTk):
         self.add_button = ctk.CTkButton(master=self.frame,
                                         text="Add Task",
                                         font=("arial", 12, "bold"),
-                                        command=self.add_task)
+                                        command=self.handle_add_task)
         self.add_button.place(relx=0.5,
                               rely=0.350,
                               anchor='center')
@@ -87,8 +87,17 @@ class App(ctk.CTk):
                                padx=12,
                                expand=True)
 
-    def add_task(self):
-        print("Task Added!")
+    def open_add_task(self):
+        print("Task Opened")
+
+    def handle_add_task(self):
+        if self.add_button._text == "Add Task":
+            self.open_add_task()
+        else:
+            self.close_add_task()
+
+    def close_add_task(self):
+        print("Task Closed")
 
     def view_tasks(self):
         print("Viewing Tasks!")
@@ -110,7 +119,7 @@ class App(ctk.CTk):
     def open_settings(self):
         # settings frame
         self.settings_frame = ctk.CTkFrame(master=self, 
-                                           height=400, 
+                                           height=300, 
                                            width=250)
         self.settings_frame.place(relx=0.5, 
                                   rely=0.5, 
@@ -124,8 +133,21 @@ class App(ctk.CTk):
                                            text='Settings', 
                                            font=("Arial", 24, "bold"))
         self.settings_label.place(relx=0.5, 
-                                  rely=0.1, 
+                                  rely=0.145, 
                                   anchor='center')
+
+        # default button variable.
+        self.default_var = ctk.BooleanVar()
+
+        # switch for default theme only.
+        self.default_theme_switch = ctk.CTkSwitch(master=self.settings_frame, 
+                                                 text='Default', 
+                                                 font=("Arial", 12, "bold"),
+                                                 command=self.default,
+                                                 variable=self.default_var)
+        self.default_theme_switch.place(relx=0.5, 
+                                       rely=0.425, 
+                                       anchor='center')
 
         # change_theme_var is a BooleanVar() from CTkinter, it is a data type for this library.
         self.change_theme_var = ctk.BooleanVar()
@@ -142,7 +164,7 @@ class App(ctk.CTk):
                                                  command=self.edit_theme,
                                                  variable=self.change_theme_var)
         self.change_theme_switch.place(relx=0.5, 
-                                       rely=0.3, 
+                                       rely=0.550, 
                                        anchor='center')
 
         # change_color_slider changes color depending on the slider.
@@ -150,9 +172,10 @@ class App(ctk.CTk):
                                                  from_=0,
                                                  to=2,
                                                  command=self.change_color,
-                                                 number_of_steps=2)
+                                                 number_of_steps=2,
+                                                 width=150)
         self.change_color_slider.place(relx=0.5, 
-                                       rely=0.9, 
+                                       rely=0.750, 
                                        anchor='center')
         self.change_color_slider.set(self.settings["number_color"])
 
@@ -161,8 +184,20 @@ class App(ctk.CTk):
                                                text=self.settings["name_color"], 
                                                font=("Arial", 12, "bold"))
         self.change_color_label.place(relx=0.5, 
-                                      rely=0.850, 
+                                      rely=0.675, 
                                       anchor='center')
+
+        # Reset Button.
+        self.reset_button = ctk.CTkButton(master=self.settings_frame,
+                                          text='Reset',
+                                          font=("Arial", 12, "bold"))
+        self.reset_button.place(relx=0.5,
+                                rely=0.850,
+                                anchor='center')
+
+
+    def default(self):
+        pass
 
     # edit_theme function handles the input when you toggle the switch.
     def edit_theme(self):

@@ -1,12 +1,7 @@
 import customtkinter as ctk
 from tkinter import messagebox
-from settings_manager import (SettingsManager, 
-                              APP_TITLE, 
-                              ICONPATH, 
-                              DEFAULT_SETTINGS, 
-                              SETTINGS_PATH,
-                              DEFAULT_FONT,
-                              DEFAULT_TITLE_FONT)
+from settings_manager import *
+from tasks_manager import *
 import json
 import os
 
@@ -14,16 +9,16 @@ class App(ctk.CTk):
     def __init__(self):
         super().__init__()
         self.settings_manager = SettingsManager()
+        self.tasks_manager = TasksManager()
         self.settings = self.settings_manager.load_settings()
         ctk.set_appearance_mode(self.settings["appearance"])
         ctk.set_default_color_theme(self.settings["color_theme"])
-        # Main Window:
         self.title(APP_TITLE)
         self.geometry("400x500")
         self.resizable(False, False)
         self.iconbitmap(ICONPATH)
 
-        # Menu Frame:
+        # MAIN MENU FRAME:
         self.frame = ctk.CTkFrame(master=self,
                                   width=250,
                                   height=300)
@@ -32,7 +27,7 @@ class App(ctk.CTk):
                          anchor='center')
         self.frame.propagate(False)
 
-        # Menu Title Label:
+        # MAIN MENU TITLE:
         self.title = ctk.CTkLabel(master=self.frame,
                                   text="To-Do List",
                                   font=DEFAULT_TITLE_FONT)
@@ -40,7 +35,7 @@ class App(ctk.CTk):
                          rely=0.1,
                          anchor='n')
 
-        # Settings Button:
+        # SETTINGS BUTTON:
         self.settings_button = ctk.CTkButton(master=self,
                                       text="Settings",
                                       font=DEFAULT_FONT,
@@ -50,7 +45,7 @@ class App(ctk.CTk):
         self.settings_button.place(relx=0.830,
                                    rely=0.010)
 
-        # Add task button:
+        # ADD TASK BUTTON:
         self.add_button = ctk.CTkButton(master=self.frame,
                                         text="Add Task",
                                         font=DEFAULT_FONT,
@@ -59,7 +54,7 @@ class App(ctk.CTk):
                               rely=0.350,
                               anchor='center')
 
-        # View tasks button:
+        # VIEW TASK BUTTON:
         self.view_button = ctk.CTkButton(master=self.frame,
                                          text="View Tasks",
                                          font=DEFAULT_FONT, 
@@ -68,7 +63,7 @@ class App(ctk.CTk):
                                rely=0.475, 
                                anchor='center')
 
-        # Edit task button:
+        # EDIT TASK BUTTON:
         self.edit_button = ctk.CTkButton(master=self.frame, 
                                          text="Edit Task", 
                                          font=DEFAULT_FONT, 
@@ -77,7 +72,7 @@ class App(ctk.CTk):
                                rely=0.6,
                                anchor='center')
 
-        # Delete task button:
+        # DELETE TASK BUTTON:
         self.delete_button = ctk.CTkButton(master=self.frame, 
                                          text="Delete Task", 
                                          font=DEFAULT_FONT, 
@@ -86,7 +81,7 @@ class App(ctk.CTk):
                                rely=0.725, 
                                anchor='center')
 
-        #Bottom label(version):
+        #VERSION LABEL:
         self.bottom_label = ctk.CTkLabel(master=self, 
                                          text="Version 1.0", 
                                          font=DEFAULT_FONT)
@@ -97,9 +92,10 @@ class App(ctk.CTk):
         self.info_label = ctk.CTkLabel(master=self,
                                         text="Restart the application to load changes.",
                                         font=DEFAULT_FONT)
+        
     def open_add_task(self):
-        self.frame.place_forget()
         self.settings_button.place_forget()
+        self.frame.place_forget()
 
         # ADD TASK FRAME:
         self.add_task_frame = ctk.CTkFrame(master=self,
@@ -145,7 +141,8 @@ class App(ctk.CTk):
 
     def add_new_task(self):
         self.task = self.add_task_textbox.get("0.0", "end-1c")
-        print(f"The New Task is: {self.task}")
+        self.tasks_manager.save_task(self.task)
+        self.close_add_task()
 
     def close_add_task(self):
         self.add_task_frame.place_forget()
@@ -164,18 +161,17 @@ class App(ctk.CTk):
     def delete_tasks(self):
         print("Deleting Tasks!")
 
-        # handle settings function handles the input when opening the settings.
+        # HANDLE SETTINGS INPUT:.
     def handle_settings(self):
         if self.settings_button._text == 'Settings':
             self.open_settings()
         else:
             self.close_settings()
 
-        # open settings when input is detected.
+        # OPEN SETTINGS AFTER HANDLE INPUT:
     def open_settings(self):
-        self.frame.place_forget()
 
-        # settings frame
+        # SETTINGS FRAME:
         self.settings_frame = ctk.CTkFrame(master=self, 
                                            height=300, 
                                            width=250)
@@ -186,22 +182,17 @@ class App(ctk.CTk):
         self.settings_button.configure(text='Main Menu')
         self.settings_button.place_configure(relx=0.800)
 
-        # credits
+        self.frame.place_forget()
+
+        # INFO:
         self.created_by = ctk.CTkLabel(master=self.settings_frame,
-                                     text="Created by: Joshwell",
+                                     text="Created by: Joshwell\n Created in: August 12, 2026",
                                      font=DEFAULT_FONT)
         self.created_by.place(relx=0.5, 
-                            rely=0.25,
-                            anchor='center')
-                # credits
-        self.date_created = ctk.CTkLabel(master=self.settings_frame,
-                                     text="Created in: August 12, 2026",
-                                     font=DEFAULT_FONT)
-        self.date_created.place(relx=0.5, 
-                            rely=0.325,
+                            rely=0.30,
                             anchor='center')
 
-        # settings_label.
+        # SETTINGS TITLE LABEL:
         self.settings_label = ctk.CTkLabel(master=self.settings_frame, 
                                            text='Settings', 
                                            font=DEFAULT_TITLE_FONT,
@@ -217,7 +208,7 @@ class App(ctk.CTk):
         if self.current_theme == "Dark":
             self.change_theme_var.set(value=True)
 
-        #change_theme_switch is a switch for dark mode.
+        #DARK THEME MODE SWITCH:
         self.change_theme_switch = ctk.CTkSwitch(master=self.settings_frame, 
                                                  text='Dark Mode', 
                                                  font=DEFAULT_FONT,
@@ -227,7 +218,7 @@ class App(ctk.CTk):
                                        rely=0.450, 
                                        anchor='center')
 
-        # label for change_color_slider.
+        # LABEL FOR COLOR SLIDER:
         self.change_color_label = ctk.CTkLabel(master=self.settings_frame, 
                                                text=self.settings["name_color"], 
                                                font=DEFAULT_FONT,)
@@ -235,7 +226,7 @@ class App(ctk.CTk):
                                       rely=0.550, 
                                       anchor='center')
 
-         # change_color_slider changes color depending on the slider.
+         # COLOR CHANGER SLIDER:
         self.change_color_slider = ctk.CTkSlider(master=self.settings_frame, 
                                                  from_=0,
                                                  to=2,
@@ -247,7 +238,7 @@ class App(ctk.CTk):
                                        anchor='center')
         self.change_color_slider.set(self.settings["number_color"])
 
-         # Delete all Tasks button.
+         # dELETE ALL TASK BUTTON:
         self.delete_all_task_button = ctk.CTkButton(master=self.settings_frame,
                                           text='Delete All Tasks',
                                           font=DEFAULT_FONT,
@@ -256,7 +247,7 @@ class App(ctk.CTk):
                                 rely=0.725,
                                 anchor='center')
 
-        # Default Settings Button.
+        # DEFAULT SETTINGS BUTTON:
         self.default_settings_button = ctk.CTkButton(master=self.settings_frame,
                                           text='Default Settings',
                                           font=DEFAULT_FONT,
@@ -265,12 +256,12 @@ class App(ctk.CTk):
                                 rely=0.850,
                                 anchor='center')
         
-    # edit_theme function handles the input when you toggle the switch.
+    # EDIT APPEARANCE SWITCH FUNCTION:
     def edit_theme(self):
 
-        self.change_theme_var.get()
+        self.change_appearance_var.get()
 
-        if self.change_theme_var.get() == True:
+        if self.appearance.get() == True:
             appearance = "Dark"
         else:
             appearance = "Light"
@@ -280,7 +271,7 @@ class App(ctk.CTk):
         self.settings["appearance"] = appearance
         self.settings_manager.save_settings(self.settings)
 
-    # change_color is the main function of changing the color.
+    # CHANGE COLOR SLIDER FUNCTION:
     def change_color(self, value):
 
         if value == 0.0:
@@ -314,7 +305,7 @@ class App(ctk.CTk):
         except AttributeError:
             pass
 
-    # close_settings function closes the settings.
+    # CLOSE SETTINGS FUNCTION:
     def close_settings(self):
 
         self.frame.place(relx=0.5,
@@ -325,7 +316,7 @@ class App(ctk.CTk):
         self.settings_button.configure(text='Settings')
         self.settings_button.place_configure(relx=0.840)
 
-    # function for settings the theme to default
+    # DEFAULT APPEARANCE AND THEME BUTTON:
     def default(self):
         self.erase = os.remove(SETTINGS_PATH)
         with open(SETTINGS_PATH, "w") as file:
@@ -339,6 +330,7 @@ class App(ctk.CTk):
         except AttributeError:
             pass
 
+    # DELETE ALL TASKS BUTTONS:
     def delete_all_task(self):
         messagebox.showinfo(title=APP_TITLE,
                             message='Successfully Deleted All Tasks.')

@@ -6,15 +6,15 @@ DEFAULT_SETTINGS = {"appearance": "System",
                     "name_color": "Blue",
                     "number_color": 0}
 
-SETTINGS_PATH = "data/settings.json"
 DEFAULT_FONT = ("Arial", 12, "bold")
 DEFAULT_TITLE_FONT = ("Arial", 24, "bold")
 
 APP_TITLE = "To-Do List"
+SETTINGS_PATH = "data/settings.json"
 ICONPATH = "asset/icon.ico"
 
 class SettingsManager:
-    # load settings changes.
+    # LOAD SAVED SETTINGS:
     def load_settings(self):
         try:
             with open(SETTINGS_PATH, "r") as file:
@@ -22,7 +22,7 @@ class SettingsManager:
         except FileNotFoundError:
             return DEFAULT_SETTINGS
  
-    # save settings changes.
+    # SAVE NEW CHANGES IN SETTINGS:
     def save_settings(self, data):
         try:
             os.mkdir('data')

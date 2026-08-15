@@ -119,18 +119,19 @@ class App(ctk.CTk):
                                                width=300,
                                                placeholder_text='Task Name...',
                                                font=DEFAULT_FONT,
-                                               border_color='')
+                                               border_color='',
+                                               fg_color="#222222")
         self.name_of_task_entry.place(relx=0.5,
                                       rely=0.225,
                                       anchor='center')
 
         # DESCRIPTION OF TASK:
-        self.add_task_textbox = ctk.CTkEntry(master=self.add_task_frame,
+        self.add_task_textbox = ctk.CTkTextbox(master=self.add_task_frame,
                                              font=DEFAULT_FONT,
                                              height=175,
                                              width=300,
                                              border_color='',
-                                             placeholder_text='Task Description...')
+                                             activate_scrollbars= True)
         self.add_task_textbox.place(relx=0.5,
                                     rely=0.5,
                                     anchor='center')
@@ -154,8 +155,9 @@ class App(ctk.CTk):
                           anchor='center')
 
     def add_new_task(self):
-        task = self.add_task_textbox.get("0.0", "end-1c")
-        self.tasks_manager.save_task(task)
+        task_description = self.add_task_textbox.get("0.0", "end-1c")
+        name_task = self.name_of_task_entry.get()
+        self.tasks_manager.save_task(name_task)
         self.close_add_task()
 
     def close_add_task(self):
@@ -392,7 +394,12 @@ class App(ctk.CTk):
 
     # DELETE ALL TASKS BUTTONS:
     def delete_all_task(self):
-        os.remove(TASKS)
+        try:
+            os.remove(TASKS)
+        except FileNotFoundError:
+            messagebox.showinfo(title=APP_TITLE,
+                                message='No Tasks to Delete.')
+            return
         messagebox.showinfo(title=APP_TITLE,
                             message='Successfully Deleted All Tasks.')
 

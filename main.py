@@ -58,7 +58,7 @@ class App(ctk.CTk):
         self.view_button = ctk.CTkButton(master=self.frame,
                                          text="View Tasks",
                                          font=DEFAULT_FONT, 
-                                         command=self.view_tasks)
+                                         command=self.open_view_tasks)
         self.view_button.place(relx=0.5, 
                                rely=0.475, 
                                anchor='center')
@@ -92,7 +92,8 @@ class App(ctk.CTk):
         self.info_label = ctk.CTkLabel(master=self,
                                         text="Restart the application to load changes.",
                                         font=DEFAULT_FONT)
-        
+
+    # ADD TASK:
     def open_add_task(self):
         self.settings_button.place_forget()
         self.frame.place_forget()
@@ -140,7 +141,7 @@ class App(ctk.CTk):
                           anchor='center')
 
     def add_new_task(self):
-        self.task = self.add_task_textbox.get("0.0", "end-1c")
+        self.task = self.add_task_textbox.get("0.0", "end")
         self.tasks_manager.save_task(self.task)
         self.close_add_task()
 
@@ -152,8 +153,43 @@ class App(ctk.CTk):
         self.settings_button.place(relx=0.830,
                                    rely=0.010)
 
-    def view_tasks(self):
-        print("Viewing Tasks!")
+    # VIEW TASKS:
+    def open_view_tasks(self):
+        self.settings_button.place_forget()
+        self.frame.place_forget()
+
+        # VIEW TASKS FRAME:
+        self.view_tasks_frame = ctk.CTkFrame(master=self,
+                                             height=300,
+                                             width=250)
+        self.view_tasks_frame.place(relx=0.5,
+                                    rely=0.5,
+                                    anchor='center')
+
+        # VIEW TASKS TITLE:
+        self.view_tasks_label = ctk.CTkLabel(master=self.view_tasks_frame,
+                                             text='View Tasks',
+                                             font=DEFAULT_TITLE_FONT)
+        self.view_tasks_label.place(relx=0.5,
+                                    rely=0.150,
+                                    anchor='center')
+    
+        #VIEW TASKS BACK BUTTON:
+        self.close_view_tasks_button = ctk.CTkButton(master=self.view_tasks_frame,
+                                                     text='Back',
+                                                     font=DEFAULT_FONT,
+                                                     command=self.close_view_tasks)
+        self.close_view_tasks_button.place(relx=0.5,
+                                         rely=0.9,
+                                         anchor='center')
+
+    def close_view_tasks(self):
+        self.view_tasks_frame.place_forget()
+        self.frame.place(relx=0.5,
+                         rely=0.5,
+                         anchor='center')
+        self.settings_button.place(relx=0.830,
+                                   rely=0.010)
 
     def edit_tasks(self):
         print("Editing Task!")

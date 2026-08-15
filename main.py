@@ -1,16 +1,14 @@
 import customtkinter as ctk
 from tkinter import messagebox
+from settings_manager import (SettingsManager, APP_TITLE, ICONPATH, DEFAULT_SETTINGS, SETTINGS_PATH)
 import json
 import os
-
-APP_TITLE = "To-Do List"
-SETTINGS_PATH = "data/settings.json"
-ICONPATH = "asset/icon.ico"
 
 class App(ctk.CTk):
     def __init__(self):
         super().__init__()
-        self.settings = self.load_settings()
+        self.settings_manager = SettingsManager()
+        self.settings = self.settings_manager.load_settings()
         ctk.set_appearance_mode(self.settings["appearance"])
         ctk.set_default_color_theme(self.settings["color_theme"])
         # Main Window:
@@ -114,15 +112,16 @@ class App(ctk.CTk):
     def delete_tasks(self):
         print("Deleting Tasks!")
 
-    # handle settings function handles the input when opening the settings.
+        # handle settings function handles the input when opening the settings.
     def handle_settings(self):
         if self.settings_button._text == 'Settings':
             self.open_settings()
         else:
             self.close_settings()
 
-    # open settings when input is detected.
+        # open settings when input is detected.
     def open_settings(self):
+        self.frame.place_forget()
         # settings frame
         self.settings_frame = ctk.CTkFrame(master=self, 
                                            height=300, 
@@ -141,7 +140,6 @@ class App(ctk.CTk):
         self.settings_label.place(relx=0.5, 
                                   rely=0.145, 
                                   anchor='center')
-
         # change_theme_var is a BooleanVar() from CTkinter, it is a data type for this library.
         self.change_theme_var = ctk.BooleanVar()
         self.current_theme = ctk.get_appearance_mode()
@@ -211,7 +209,7 @@ class App(ctk.CTk):
         ctk.set_appearance_mode(appearance)
 
         self.settings["appearance"] = appearance
-        self.save_settings(self.settings)
+        self.settings_manager.save_settings(self.settings)
 
     # change_color is the main function of changing the color.
     def change_color(self, value):
@@ -239,7 +237,7 @@ class App(ctk.CTk):
         self.settings["name_color"] = color
         self.settings["number_color"] = number
         self.settings["color_theme"] = theme
-        self.save_settings(self.settings)
+        self.settings_manager.save_settings(self.settings)
         try:
             self.info_label.place(relx=0.5,
                                  rely=0.9,
@@ -250,37 +248,19 @@ class App(ctk.CTk):
     # close_settings function closes the settings.
     def close_settings(self):
 
+        self.frame.place(relx=0.5,
+                                 rely=0.5,
+                                 anchor='center')
         self.info_label.place_forget()
         self.settings_frame.place_forget()
         self.settings_button.configure(text='Settings')
         self.settings_button.place_configure(relx=0.840)
 
-    # load settings changes.
-    def load_settings(self):
-        try:
-            with open(SETTINGS_PATH, "r") as file:
-                return json.load(file)
-        except FileNotFoundError:
-            return {"appearance": "System", "color_theme": "blue", "number_color": 0, "name_color": "Blue"}
-
-    # save settings changes.
-    def save_settings(self, data):
-        try:
-            os.mkdir('data')
-        except FileExistsError:
-            pass
-        with open(SETTINGS_PATH, "w") as file:
-            json.dump(data, file)
-
-    def delete_all_task(self):
-        messagebox.showinfo(title=APP_TITLE,
-                            message='Successfully Deleted All Tasks.')
-
     # function for settings the theme to default
     def default(self):
         self.erase = os.remove(SETTINGS_PATH)
         with open(SETTINGS_PATH, "w") as file:
-            json.dump({"appearance": "System", "color_theme": "blue", "number_color": 0, "name_color": "Blue"}, file)
+            json.dump(DEFAULT_SETTINGS, file)
         ctk.set_appearance_mode(self.settings["appearance"])
         ctk.set_default_color_theme(self.settings["color_theme"])
         try:
@@ -289,7 +269,12 @@ class App(ctk.CTk):
                                  anchor='center')
         except AttributeError:
             pass
-        
+
+    def delete_all_task(self):
+        messagebox.showinfo(title=APP_TITLE,
+                            message='Successfully Deleted All Tasks.')
+
+    
 
 if __name__ == "__main__":
     app = App()

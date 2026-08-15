@@ -1,6 +1,12 @@
 import customtkinter as ctk
 from tkinter import messagebox
-from settings_manager import (SettingsManager, APP_TITLE, ICONPATH, DEFAULT_SETTINGS, SETTINGS_PATH)
+from settings_manager import (SettingsManager, 
+                              APP_TITLE, 
+                              ICONPATH, 
+                              DEFAULT_SETTINGS, 
+                              SETTINGS_PATH,
+                              DEFAULT_FONT,
+                              DEFAULT_TITLE_FONT)
 import json
 import os
 
@@ -29,7 +35,7 @@ class App(ctk.CTk):
         # Menu Title Label:
         self.title = ctk.CTkLabel(master=self.frame,
                                   text="To-Do List",
-                                  font=("arial", 24, "bold"))
+                                  font=DEFAULT_TITLE_FONT)
         self.title.place(relx=0.5,
                          rely=0.1,
                          anchor='n')
@@ -37,7 +43,7 @@ class App(ctk.CTk):
         # Settings Button:
         self.settings_button = ctk.CTkButton(master=self,
                                       text="Settings",
-                                      font=("arial", 12, "bold"),
+                                      font=DEFAULT_FONT,
                                       height=30,
                                       width=30,
                                       command=self.handle_settings)
@@ -47,8 +53,8 @@ class App(ctk.CTk):
         # Add task button:
         self.add_button = ctk.CTkButton(master=self.frame,
                                         text="Add Task",
-                                        font=("arial", 12, "bold"),
-                                        command=self.handle_add_task)
+                                        font=DEFAULT_FONT,
+                                        command=self.open_add_task)
         self.add_button.place(relx=0.5,
                               rely=0.350,
                               anchor='center')
@@ -56,7 +62,7 @@ class App(ctk.CTk):
         # View tasks button:
         self.view_button = ctk.CTkButton(master=self.frame,
                                          text="View Tasks",
-                                         font=("arial", 12, "bold"), 
+                                         font=DEFAULT_FONT, 
                                          command=self.view_tasks)
         self.view_button.place(relx=0.5, 
                                rely=0.475, 
@@ -65,7 +71,7 @@ class App(ctk.CTk):
         # Edit task button:
         self.edit_button = ctk.CTkButton(master=self.frame, 
                                          text="Edit Task", 
-                                         font=("arial", 12, "bold"), 
+                                         font=DEFAULT_FONT, 
                                          command=self.edit_tasks)
         self.edit_button.place(relx=0.5, 
                                rely=0.6,
@@ -74,7 +80,7 @@ class App(ctk.CTk):
         # Delete task button:
         self.delete_button = ctk.CTkButton(master=self.frame, 
                                          text="Delete Task", 
-                                         font=("arial", 12, "bold"), 
+                                         font=DEFAULT_FONT, 
                                          command=self.delete_tasks)
         self.delete_button.place(relx=0.5, 
                                rely=0.725, 
@@ -83,25 +89,71 @@ class App(ctk.CTk):
         #Bottom label(version):
         self.bottom_label = ctk.CTkLabel(master=self, 
                                          text="Version 1.0", 
-                                         font=("Arial", 12, "bold"))
+                                         font=DEFAULT_FONT)
         self.bottom_label.pack(anchor='sw', 
                                padx=12,
                                expand=True)
 
         self.info_label = ctk.CTkLabel(master=self,
                                         text="Restart the application to load changes.",
-                                        font=("Arial", 12, "bold"))
+                                        font=DEFAULT_FONT)
     def open_add_task(self):
-        print("Task Opened")
+        self.frame.place_forget()
+        self.settings_button.place_forget()
 
-    def handle_add_task(self):
-        if self.add_button._text == "Add Task":
-            self.open_add_task()
-        else:
-            self.close_add_task()
+        # ADD TASK FRAME:
+        self.add_task_frame = ctk.CTkFrame(master=self,
+                                           height=300,
+                                           width=250)
+        self.add_task_frame.place(relx=0.5,
+                                  rely=0.5,
+                                  anchor='center')
+
+        # ADD TASK TITLE:
+        self.add_task_title = ctk.CTkLabel(master=self.add_task_frame,
+                                           text='Add Task',
+                                           font=DEFAULT_TITLE_FONT)
+        self.add_task_title.place(relx=0.5, 
+                                  rely=0.150,
+                                  anchor='center')
+
+        # INPUT NEW TASK:
+        self.add_task_textbox = ctk.CTkTextbox(master=self.add_task_frame,
+                                               font=DEFAULT_FONT,
+                                               height=125)
+        self.add_task_textbox.place(relx=0.5,
+                                    rely=0.450,
+                                    anchor='center')
+
+        # ADD NEW TASK BUTTON:
+        self.add_task_button = ctk.CTkButton(master=self.add_task_frame,
+                                    text='Add Task',
+                                    font=DEFAULT_FONT,
+                                    command=self.add_new_task)
+        self.add_task_button.place(relx=0.5,
+                          rely=0.775,
+                          anchor='center')
+
+        # CLOSE ADD TASK BUTTON:
+        self.close_add_task_button = ctk.CTkButton(master=self.add_task_frame,
+                                    text='Cancel',
+                                    font=DEFAULT_FONT,
+                                    command=self.close_add_task)
+        self.close_add_task_button.place(relx=0.5,
+                          rely=0.9,
+                          anchor='center')
+
+    def add_new_task(self):
+        self.task = self.add_task_textbox.get("0.0", "end-1c")
+        print(f"The New Task is: {self.task}")
 
     def close_add_task(self):
-        print("Task Closed")
+        self.add_task_frame.place_forget()
+        self.frame.place(relx=0.5,
+                         rely=0.5,
+                         anchor='center')
+        self.settings_button.place(relx=0.830,
+                                   rely=0.010)
 
     def view_tasks(self):
         print("Viewing Tasks!")
@@ -122,6 +174,7 @@ class App(ctk.CTk):
         # open settings when input is detected.
     def open_settings(self):
         self.frame.place_forget()
+
         # settings frame
         self.settings_frame = ctk.CTkFrame(master=self, 
                                            height=300, 
@@ -133,12 +186,28 @@ class App(ctk.CTk):
         self.settings_button.configure(text='Main Menu')
         self.settings_button.place_configure(relx=0.800)
 
+        # credits
+        self.created_by = ctk.CTkLabel(master=self.settings_frame,
+                                     text="Created by: Joshwell",
+                                     font=DEFAULT_FONT)
+        self.created_by.place(relx=0.5, 
+                            rely=0.25,
+                            anchor='center')
+                # credits
+        self.date_created = ctk.CTkLabel(master=self.settings_frame,
+                                     text="Created in: August 12, 2026",
+                                     font=DEFAULT_FONT)
+        self.date_created.place(relx=0.5, 
+                            rely=0.325,
+                            anchor='center')
+
         # settings_label.
         self.settings_label = ctk.CTkLabel(master=self.settings_frame, 
                                            text='Settings', 
-                                           font=("Arial", 24, "bold"))
-        self.settings_label.place(relx=0.5, 
-                                  rely=0.145, 
+                                           font=DEFAULT_TITLE_FONT,
+                                           anchor='center')
+        self.settings_label.place(relx=0.5,
+                                  rely=0.150,
                                   anchor='center')
         # change_theme_var is a BooleanVar() from CTkinter, it is a data type for this library.
         self.change_theme_var = ctk.BooleanVar()
@@ -151,7 +220,7 @@ class App(ctk.CTk):
         #change_theme_switch is a switch for dark mode.
         self.change_theme_switch = ctk.CTkSwitch(master=self.settings_frame, 
                                                  text='Dark Mode', 
-                                                 font=("Arial", 12, "bold"),
+                                                 font=DEFAULT_FONT,
                                                  command=self.edit_theme,
                                                  variable=self.change_theme_var)
         self.change_theme_switch.place(relx=0.5, 
@@ -161,7 +230,7 @@ class App(ctk.CTk):
         # label for change_color_slider.
         self.change_color_label = ctk.CTkLabel(master=self.settings_frame, 
                                                text=self.settings["name_color"], 
-                                               font=("Arial", 12, "bold"))
+                                               font=DEFAULT_FONT,)
         self.change_color_label.place(relx=0.5, 
                                       rely=0.550, 
                                       anchor='center')
@@ -181,7 +250,7 @@ class App(ctk.CTk):
          # Delete all Tasks button.
         self.delete_all_task_button = ctk.CTkButton(master=self.settings_frame,
                                           text='Delete All Tasks',
-                                          font=("Arial", 12, "bold"),
+                                          font=DEFAULT_FONT,
                                           command=self.delete_all_task)
         self.delete_all_task_button.place(relx=0.5,
                                 rely=0.725,
@@ -190,7 +259,7 @@ class App(ctk.CTk):
         # Default Settings Button.
         self.default_settings_button = ctk.CTkButton(master=self.settings_frame,
                                           text='Default Settings',
-                                          font=("Arial", 12, "bold"),
+                                          font=DEFAULT_FONT,
                                           command=self.default)
         self.default_settings_button.place(relx=0.5,
                                 rely=0.850,

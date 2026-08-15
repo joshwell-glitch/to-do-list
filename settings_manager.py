@@ -7,6 +7,8 @@ DEFAULT_SETTINGS = {"appearance": "System",
                     "number_color": 0}
 
 SETTINGS_PATH = "data/settings.json"
+DEFAULT_FONT = ("Arial", 12, "bold")
+DEFAULT_TITLE_FONT = ("Arial", 24, "bold")
 
 APP_TITLE = "To-Do List"
 ICONPATH = "asset/icon.ico"
@@ -19,7 +21,7 @@ class SettingsManager:
                 return json.load(file)
         except FileNotFoundError:
             return DEFAULT_SETTINGS
-
+ 
     # save settings changes.
     def save_settings(self, data):
         try:

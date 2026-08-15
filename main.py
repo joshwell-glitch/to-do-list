@@ -209,7 +209,7 @@ class App(ctk.CTk):
 
         for task in self.loaded_tasks:
             self.label_task = ctk.CTkCheckBox(master=self.scrollable_frame_view_task,
-                                           text=f"{task["name"]} -> {task["description"]}",
+                                           text=f"{task["name"]} - > {task["description"]}",
                                            font=DEFAULT_FONT,
                                            command=self.check)
             self.label_task.pack(pady=3,
@@ -225,7 +225,14 @@ class App(ctk.CTk):
                                          anchor='center')
 
     def check(self):
-        print(f"The value is: {self.label_task.get()}")
+        checked = self.label_task.get()
+        with open(TASKS, 'r') as file:
+            json.load(file)
+        if checked != 0:
+            print('true')
+
+        else:
+            print('false')
 
     def close_view_tasks(self):
         self.view_tasks_frame.place_forget()
@@ -281,19 +288,19 @@ class App(ctk.CTk):
                                   rely=0.150,
                                   anchor='center')
         # change_theme_var is a BooleanVar() from CTkinter, it is a data type for this library.
-        self.change_theme_var = ctk.BooleanVar()
-        self.current_theme = ctk.get_appearance_mode()
-        if self.current_theme == "Light":
-            self.change_theme_var.set(value=False)
-        if self.current_theme == "Dark":
-            self.change_theme_var.set(value=True)
+        self.change_appearance_var = ctk.BooleanVar()
+        self.current_appearance = ctk.get_appearance_mode()
+        if self.current_appearance == "Light":
+            self.change_appearance_var.set(value=False)
+        if self.current_appearance == "Dark":
+            self.change_appearance_var.set(value=True)
 
         #DARK THEME MODE SWITCH:
         self.change_theme_switch = ctk.CTkSwitch(master=self.settings_frame, 
                                                  text='Dark Mode', 
                                                  font=DEFAULT_FONT,
                                                  command=self.edit_theme,
-                                                 variable=self.change_theme_var)
+                                                 variable=self.change_appearance_var)
         self.change_theme_switch.place(relx=0.5, 
                                        rely=0.450, 
                                        anchor='center')
@@ -318,7 +325,7 @@ class App(ctk.CTk):
                                        anchor='center')
         self.change_color_slider.set(self.settings["number_color"])
 
-         # dELETE ALL TASK BUTTON:
+         # DELETE ALL TASK BUTTON:
         self.delete_all_task_button = ctk.CTkButton(master=self.settings_frame,
                                           text='Delete All Tasks',
                                           font=DEFAULT_FONT,
@@ -339,9 +346,7 @@ class App(ctk.CTk):
     # EDIT APPEARANCE SWITCH FUNCTION:
     def edit_theme(self):
 
-        self.change_appearance_var.get()
-
-        if self.appearance.get() == True:
+        if self.change_appearance_var.get() == True:
             appearance = "Dark"
         else:
             appearance = "Light"

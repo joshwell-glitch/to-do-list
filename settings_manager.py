@@ -1,7 +1,7 @@
 import json
 import os
 
-DEFAULT_SETTINGS = {"appearance": "System", 
+DEFAULT_SETTINGS = {"appearance": "system", 
                     "color_theme": "blue", 
                     "name_color": "Blue",
                     "number_color": 0}

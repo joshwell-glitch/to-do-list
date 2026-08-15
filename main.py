@@ -17,6 +17,7 @@ class App(ctk.CTk):
         self.geometry("400x500")
         self.resizable(False, False)
         self.iconbitmap(ICONPATH)
+        self.task_id = 1
 
         # MAIN MENU FRAME:
         self.frame = ctk.CTkFrame(master=self,
@@ -155,9 +156,16 @@ class App(ctk.CTk):
                           anchor='center')
 
     def add_new_task(self):
+        task_name = self.name_of_task_entry.get()
         task_description = self.add_task_textbox.get("0.0", "end-1c")
-        name_task = self.name_of_task_entry.get()
-        self.tasks_manager.save_task(name_task)
+
+        task = {"id": self.task_id,
+                "name": task_name,
+                "description": task_description,
+                "completed": False}
+
+        self.tasks_manager.save_task(task)
+        self.task_id += 1
         self.close_add_task()
 
     def close_add_task(self):
@@ -193,12 +201,19 @@ class App(ctk.CTk):
         # VIEWS TASKS SCROLLABLE FRAME:
         self.scrollable_frame_view_task = ctk.CTkScrollableFrame(master=self.view_tasks_frame,
                                                                  label_font=DEFAULT_FONT,
-                                                                 label_text="Clean")
+                                                                 height=250,
+                                                                 width=300)
         self.scrollable_frame_view_task.place(relx=0.5,
                                               rely=0.5,
                                               anchor='center')
 
-        self.scrollable_frame_view_task.configure(label_text=self.loaded_tasks)
+        for task in self.loaded_tasks:
+            self.label_task = ctk.CTkCheckBox(master=self.scrollable_frame_view_task,
+                                           text=f"{task["name"]} -> {task["description"]}",
+                                           font=DEFAULT_FONT,
+                                           command=self.check)
+            self.label_task.pack(pady=3,
+                                 anchor='w')
 
         #VIEW TASKS BACK BUTTON:
         self.close_view_tasks_button = ctk.CTkButton(master=self.view_tasks_frame,
@@ -208,6 +223,9 @@ class App(ctk.CTk):
         self.close_view_tasks_button.place(relx=0.5,
                                          rely=0.925,
                                          anchor='center')
+
+    def check(self):
+        print(f"The value is: {self.label_task.get()}")
 
     def close_view_tasks(self):
         self.view_tasks_frame.place_forget()
@@ -394,6 +412,7 @@ class App(ctk.CTk):
 
     # DELETE ALL TASKS BUTTONS:
     def delete_all_task(self):
+        self.task_id = 0
         try:
             os.remove(TASKS)
         except FileNotFoundError:

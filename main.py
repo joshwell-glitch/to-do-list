@@ -1,7 +1,10 @@
 import customtkinter as ctk
+from tkinter import messagebox
 import json
+import os
 
-SETTINGS_PATH = "data/saved_settings.json"
+APP_TITLE = "To-Do List"
+SETTINGS_PATH = "data/settings.json"
 ICONPATH = "asset/icon.ico"
 
 class App(ctk.CTk):
@@ -11,7 +14,7 @@ class App(ctk.CTk):
         ctk.set_appearance_mode(self.settings["appearance"])
         ctk.set_default_color_theme(self.settings["color_theme"])
         # Main Window:
-        self.title("To-Do List")
+        self.title(APP_TITLE)
         self.geometry("400x500")
         self.resizable(False, False)
         self.iconbitmap(ICONPATH)
@@ -87,6 +90,9 @@ class App(ctk.CTk):
                                padx=12,
                                expand=True)
 
+        self.info_label = ctk.CTkLabel(master=self,
+                                        text="Restart the application to load changes.",
+                                        font=("Arial", 12, "bold"))
     def open_add_task(self):
         print("Task Opened")
 
@@ -136,19 +142,6 @@ class App(ctk.CTk):
                                   rely=0.145, 
                                   anchor='center')
 
-        # default button variable.
-        self.default_var = ctk.BooleanVar()
-
-        # switch for default theme only.
-        self.default_theme_switch = ctk.CTkSwitch(master=self.settings_frame, 
-                                                 text='Default', 
-                                                 font=("Arial", 12, "bold"),
-                                                 command=self.default,
-                                                 variable=self.default_var)
-        self.default_theme_switch.place(relx=0.5, 
-                                       rely=0.425, 
-                                       anchor='center')
-
         # change_theme_var is a BooleanVar() from CTkinter, it is a data type for this library.
         self.change_theme_var = ctk.BooleanVar()
         self.current_theme = ctk.get_appearance_mode()
@@ -164,10 +157,18 @@ class App(ctk.CTk):
                                                  command=self.edit_theme,
                                                  variable=self.change_theme_var)
         self.change_theme_switch.place(relx=0.5, 
-                                       rely=0.550, 
+                                       rely=0.450, 
                                        anchor='center')
 
-        # change_color_slider changes color depending on the slider.
+        # label for change_color_slider.
+        self.change_color_label = ctk.CTkLabel(master=self.settings_frame, 
+                                               text=self.settings["name_color"], 
+                                               font=("Arial", 12, "bold"))
+        self.change_color_label.place(relx=0.5, 
+                                      rely=0.550, 
+                                      anchor='center')
+
+         # change_color_slider changes color depending on the slider.
         self.change_color_slider = ctk.CTkSlider(master=self.settings_frame, 
                                                  from_=0,
                                                  to=2,
@@ -175,30 +176,28 @@ class App(ctk.CTk):
                                                  number_of_steps=2,
                                                  width=150)
         self.change_color_slider.place(relx=0.5, 
-                                       rely=0.750, 
+                                       rely=0.600, 
                                        anchor='center')
         self.change_color_slider.set(self.settings["number_color"])
 
-        # label for change_color_slider.
-        self.change_color_label = ctk.CTkLabel(master=self.settings_frame, 
-                                               text=self.settings["name_color"], 
-                                               font=("Arial", 12, "bold"))
-        self.change_color_label.place(relx=0.5, 
-                                      rely=0.675, 
-                                      anchor='center')
-
-        # Reset Button.
-        self.reset_button = ctk.CTkButton(master=self.settings_frame,
-                                          text='Reset',
-                                          font=("Arial", 12, "bold"))
-        self.reset_button.place(relx=0.5,
-                                rely=0.850,
+         # Delete all Tasks button.
+        self.delete_all_task_button = ctk.CTkButton(master=self.settings_frame,
+                                          text='Delete All Tasks',
+                                          font=("Arial", 12, "bold"),
+                                          command=self.delete_all_task)
+        self.delete_all_task_button.place(relx=0.5,
+                                rely=0.725,
                                 anchor='center')
 
-
-    def default(self):
-        pass
-
+        # Default Settings Button.
+        self.default_settings_button = ctk.CTkButton(master=self.settings_frame,
+                                          text='Default Settings',
+                                          font=("Arial", 12, "bold"),
+                                          command=self.default)
+        self.default_settings_button.place(relx=0.5,
+                                rely=0.850,
+                                anchor='center')
+        
     # edit_theme function handles the input when you toggle the switch.
     def edit_theme(self):
 
@@ -241,28 +240,56 @@ class App(ctk.CTk):
         self.settings["number_color"] = number
         self.settings["color_theme"] = theme
         self.save_settings(self.settings)
+        try:
+            self.info_label.place(relx=0.5,
+                                 rely=0.9,
+                                 anchor='center')
+        except AttributeError:
+            pass
 
     # close_settings function closes the settings.
     def close_settings(self):
 
+        self.info_label.place_forget()
         self.settings_frame.place_forget()
         self.settings_button.configure(text='Settings')
         self.settings_button.place_configure(relx=0.840)
 
     # load settings changes.
     def load_settings(self):
-
         try:
             with open(SETTINGS_PATH, "r") as file:
                 return json.load(file)
         except FileNotFoundError:
-            return {"appearance": "System", "color_theme": "blue", "number_color": 1, "name_color": "Blue"}
+            return {"appearance": "System", "color_theme": "blue", "number_color": 0, "name_color": "Blue"}
 
     # save settings changes.
     def save_settings(self, data):
-
+        try:
+            os.mkdir('data')
+        except FileExistsError:
+            pass
         with open(SETTINGS_PATH, "w") as file:
             json.dump(data, file)
+
+    def delete_all_task(self):
+        messagebox.showinfo(title=APP_TITLE,
+                            message='Successfully Deleted All Tasks.')
+
+    # function for settings the theme to default
+    def default(self):
+        self.erase = os.remove(SETTINGS_PATH)
+        with open(SETTINGS_PATH, "w") as file:
+            json.dump({"appearance": "System", "color_theme": "blue", "number_color": 0, "name_color": "Blue"}, file)
+        ctk.set_appearance_mode(self.settings["appearance"])
+        ctk.set_default_color_theme(self.settings["color_theme"])
+        try:
+            self.info_label.place(relx=0.5,
+                                 rely=0.9,
+                                 anchor='center')
+        except AttributeError:
+            pass
+        
 
 if __name__ == "__main__":
     app = App()

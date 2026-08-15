@@ -162,7 +162,7 @@ class App(ctk.CTk):
         task = {"id": self.task_id,
                 "name": task_name,
                 "description": task_description,
-                "completed": False}
+                "completed": 0}
 
         self.tasks_manager.save_task(task)
         self.task_id += 1
@@ -208,10 +208,14 @@ class App(ctk.CTk):
                                               anchor='center')
 
         for task in self.loaded_tasks:
+            checked_int = task["completed"]
+            id_status = task["id"]
+            checked_tk_int = ctk.IntVar(value=checked_int)
             self.label_task = ctk.CTkCheckBox(master=self.scrollable_frame_view_task,
-                                           text=f"{task["name"]} - > {task["description"]}",
-                                           font=DEFAULT_FONT,
-                                           command=self.check)
+                                              text=f"{task["name"]} : {task["description"]}",
+                                              font=DEFAULT_FONT,
+                                              command=self.check,
+                                              variable=checked_tk_int)
             self.label_task.pack(pady=3,
                                  anchor='w')
 
@@ -225,14 +229,15 @@ class App(ctk.CTk):
                                          anchor='center')
 
     def check(self):
-        checked = self.label_task.get()
-        with open(TASKS, 'r') as file:
-            json.load(file)
-        if checked != 0:
-            print('true')
+        checked = self.loaded_tasks
+        checked["completed"] = 1
 
+        if checked != 0:
+            print(f'true - variable: {checked}')
         else:
-            print('false')
+            print(f'false - varibale: {checked}')
+        with open(TASKS, 'w') as file:
+            json.dump(self.loaded_tasks, file)
 
     def close_view_tasks(self):
         self.view_tasks_frame.place_forget()
@@ -287,6 +292,8 @@ class App(ctk.CTk):
         self.settings_label.place(relx=0.5,
                                   rely=0.150,
                                   anchor='center')
+
+        
         # change_theme_var is a BooleanVar() from CTkinter, it is a data type for this library.
         self.change_appearance_var = ctk.BooleanVar()
         self.current_appearance = ctk.get_appearance_mode()
@@ -325,6 +332,7 @@ class App(ctk.CTk):
                                        anchor='center')
         self.change_color_slider.set(self.settings["number_color"])
 
+
          # DELETE ALL TASK BUTTON:
         self.delete_all_task_button = ctk.CTkButton(master=self.settings_frame,
                                           text='Delete All Tasks',
@@ -334,6 +342,7 @@ class App(ctk.CTk):
                                 rely=0.725,
                                 anchor='center')
 
+
         # DEFAULT SETTINGS BUTTON:
         self.default_settings_button = ctk.CTkButton(master=self.settings_frame,
                                           text='Default Settings',
@@ -342,6 +351,7 @@ class App(ctk.CTk):
         self.default_settings_button.place(relx=0.5,
                                 rely=0.850,
                                 anchor='center')
+
         
     # EDIT APPEARANCE SWITCH FUNCTION:
     def edit_theme(self):
@@ -355,6 +365,7 @@ class App(ctk.CTk):
 
         self.settings["appearance"] = appearance
         self.settings_manager.save_settings(self.settings)
+
 
     # CHANGE COLOR SLIDER FUNCTION:
     def change_color(self, value):
@@ -390,6 +401,7 @@ class App(ctk.CTk):
         except AttributeError:
             pass
 
+
     # CLOSE SETTINGS FUNCTION:
     def close_settings(self):
 
@@ -400,6 +412,7 @@ class App(ctk.CTk):
         self.settings_frame.place_forget()
         self.settings_button.configure(text='Settings')
         self.settings_button.place_configure(relx=0.840)
+
 
     # DEFAULT APPEARANCE AND THEME BUTTON:
     def default(self):
@@ -415,6 +428,7 @@ class App(ctk.CTk):
         except AttributeError:
             pass
 
+
     # DELETE ALL TASKS BUTTONS:
     def delete_all_task(self):
         self.task_id = 0
@@ -426,6 +440,8 @@ class App(ctk.CTk):
             return
         messagebox.showinfo(title=APP_TITLE,
                             message='Successfully Deleted All Tasks.')
+
+
 
 if __name__ == "__main__":
     app = App()

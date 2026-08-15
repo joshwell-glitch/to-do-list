@@ -100,8 +100,8 @@ class App(ctk.CTk):
 
         # ADD TASK FRAME:
         self.add_task_frame = ctk.CTkFrame(master=self,
-                                           height=300,
-                                           width=250)
+                                           height=400,
+                                           width=350)
         self.add_task_frame.place(relx=0.5,
                                   rely=0.5,
                                   anchor='center')
@@ -111,15 +111,28 @@ class App(ctk.CTk):
                                            text='Add Task',
                                            font=DEFAULT_TITLE_FONT)
         self.add_task_title.place(relx=0.5, 
-                                  rely=0.150,
+                                  rely=0.1,
                                   anchor='center')
 
-        # INPUT NEW TASK:
-        self.add_task_textbox = ctk.CTkTextbox(master=self.add_task_frame,
+        #NAME OF TASK ENTRY:
+        self.name_of_task_entry = ctk.CTkEntry(master=self.add_task_frame,
+                                               width=300,
+                                               placeholder_text='Task Name...',
                                                font=DEFAULT_FONT,
-                                               height=125)
+                                               border_color='')
+        self.name_of_task_entry.place(relx=0.5,
+                                      rely=0.225,
+                                      anchor='center')
+
+        # DESCRIPTION OF TASK:
+        self.add_task_textbox = ctk.CTkEntry(master=self.add_task_frame,
+                                             font=DEFAULT_FONT,
+                                             height=175,
+                                             width=300,
+                                             border_color='',
+                                             placeholder_text='Task Description...')
         self.add_task_textbox.place(relx=0.5,
-                                    rely=0.450,
+                                    rely=0.5,
                                     anchor='center')
 
         # ADD NEW TASK BUTTON:
@@ -128,7 +141,7 @@ class App(ctk.CTk):
                                     font=DEFAULT_FONT,
                                     command=self.add_new_task)
         self.add_task_button.place(relx=0.5,
-                          rely=0.775,
+                          rely=0.8,
                           anchor='center')
 
         # CLOSE ADD TASK BUTTON:
@@ -141,8 +154,8 @@ class App(ctk.CTk):
                           anchor='center')
 
     def add_new_task(self):
-        self.task = self.add_task_textbox.get("0.0", "end")
-        self.tasks_manager.save_task(self.task)
+        task = self.add_task_textbox.get("0.0", "end-1c")
+        self.tasks_manager.save_task(task)
         self.close_add_task()
 
     def close_add_task(self):
@@ -157,11 +170,12 @@ class App(ctk.CTk):
     def open_view_tasks(self):
         self.settings_button.place_forget()
         self.frame.place_forget()
+        self.loaded_tasks = self.tasks_manager.load_task()
 
         # VIEW TASKS FRAME:
         self.view_tasks_frame = ctk.CTkFrame(master=self,
-                                             height=300,
-                                             width=250)
+                                             height=400,
+                                             width=350)
         self.view_tasks_frame.place(relx=0.5,
                                     rely=0.5,
                                     anchor='center')
@@ -171,16 +185,26 @@ class App(ctk.CTk):
                                              text='View Tasks',
                                              font=DEFAULT_TITLE_FONT)
         self.view_tasks_label.place(relx=0.5,
-                                    rely=0.150,
+                                    rely=0.1,
                                     anchor='center')
-    
+
+        # VIEWS TASKS SCROLLABLE FRAME:
+        self.scrollable_frame_view_task = ctk.CTkScrollableFrame(master=self.view_tasks_frame,
+                                                                 label_font=DEFAULT_FONT,
+                                                                 label_text="Clean")
+        self.scrollable_frame_view_task.place(relx=0.5,
+                                              rely=0.5,
+                                              anchor='center')
+
+        self.scrollable_frame_view_task.configure(label_text=self.loaded_tasks)
+
         #VIEW TASKS BACK BUTTON:
         self.close_view_tasks_button = ctk.CTkButton(master=self.view_tasks_frame,
                                                      text='Back',
                                                      font=DEFAULT_FONT,
                                                      command=self.close_view_tasks)
         self.close_view_tasks_button.place(relx=0.5,
-                                         rely=0.9,
+                                         rely=0.925,
                                          anchor='center')
 
     def close_view_tasks(self):
@@ -368,10 +392,9 @@ class App(ctk.CTk):
 
     # DELETE ALL TASKS BUTTONS:
     def delete_all_task(self):
+        os.remove(TASKS)
         messagebox.showinfo(title=APP_TITLE,
                             message='Successfully Deleted All Tasks.')
-
-    
 
 if __name__ == "__main__":
     app = App()

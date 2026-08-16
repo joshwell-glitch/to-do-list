@@ -328,10 +328,10 @@ class App(ctk.CTk):
                                        rely=0.325, 
                                        anchor='center')
         self.change_color_label.place(relx=0.5, 
-                                      rely=0.450, 
+                                      rely=0.440, 
                                       anchor='center')
         self.change_color_slider.place(relx=0.5, 
-                                       rely=0.5, 
+                                       rely=0.490, 
                                        anchor='center')
         self.change_color_slider.set(self.settings["number_color"])
         self.delete_all_task_button.place(relx=0.5,

@@ -1,8 +1,8 @@
 [
     {
         "id": 0,
-        "name": "Learn Mathematics",
-        "description": "",
-        "completed": 1
+        "name": "Learn Python",
+        "description": "A Graphics User Interface Application!",
+        "completed": 0
     }
 ]

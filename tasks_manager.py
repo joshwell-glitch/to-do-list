@@ -13,10 +13,8 @@ class TasksManager:
             tasks = []
 
         tasks.append(task)
-        try:
-            os.mkdir('data')
-        except FileExistsError:
-            pass
+
+        os.makedirs("data", exist_ok=True)
 
         with open(TASKS, "w") as file:
             json.dump(tasks, file, indent=4)
@@ -27,3 +25,9 @@ class TasksManager:
                 return json.load(file)
         except FileNotFoundError:
             return []
+
+    def update_tasks(self, tasks):
+        os.makedirs ("data", exist_ok=True)
+
+        with open(TASKS, "w") as file:
+            json.dump(tasks, file, indent=4)

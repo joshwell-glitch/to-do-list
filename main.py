@@ -180,6 +180,7 @@ class App(ctk.CTk):
     def open_view_tasks(self):
         self.settings_button.place_forget()
         self.frame.place_forget()
+        
         self.loaded_tasks = self.tasks_manager.load_task()
 
         # VIEW TASKS FRAME:
@@ -207,18 +208,16 @@ class App(ctk.CTk):
                                               rely=0.5,
                                               anchor='center')
 
-        no_task = 0
         for task in self.loaded_tasks:
-            checked_int = task["completed"]
-            id_status = task["id"]
-            print(f"{no_task}")
-            self.label_task = ctk.CTkCheckBox(master=self.scrollable_frame_view_task,
+            checkbox = ctk.CTkCheckBox(master=self.scrollable_frame_view_task,
                                               text=f"{task["name"]} : {task["description"]}",
                                               font=DEFAULT_FONT,
-                                              command=lambda: self.check(no_task))
-            self.label_task.pack(pady=3,
+                                              command=lambda t=task: self.check(t))
+            if task["completed"] == 1:
+                checkbox.select()
+            
+            checkbox.pack(pady=3,
                                  anchor='w')
-            no_task += 1
 
         #VIEW TASKS BACK BUTTON:
         self.close_view_tasks_button = ctk.CTkButton(master=self.view_tasks_frame,
@@ -229,15 +228,13 @@ class App(ctk.CTk):
                                          rely=0.925,
                                          anchor='center')
 
-    def check(self, num):
-        checked = self.loaded_tasks[0]["completed"]
-        if num == self.loaded_tasks[0]["id"]:
-            print(f"Task is: {self.loaded_tasks["id"]}")
-            if checked != 0:
-                print(f'true - variable: {checked}')
-            else:
-                print(f'false - variable: {checked}')
-        self.tasks_manager.save_task(self.loaded_tasks)
+    def check(self, task):
+        if task["completed"] == 0:
+            task["completed"] = 1
+        else:
+            task["completed"] = 0
+
+        self.tasks_manager.update_tasks(self.loaded_tasks)
 
     def close_view_tasks(self):
         self.view_tasks_frame.place_forget()

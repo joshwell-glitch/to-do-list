@@ -1,1 +1,8 @@
-[{"id": 0, "name": "Hello", "description": "Hi", "completed": 0}]
+[
+    {
+        "id": 0,
+        "name": "Learn Mathematics",
+        "description": "",
+        "completed": 0
+    }
+]

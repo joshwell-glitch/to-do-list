@@ -257,10 +257,38 @@ class App(ctk.CTk):
 
     # OPEN DELETE TASKS:
     def open_delete_tasks(self):
-        pass
+        self.hide_menu()
+
+        # DELETE TASKS FRAME:
+        self.delete_tasks_frame = ctk.CTkFrame(master=self,
+                                               height=400,
+                                               width=350)
+        # DELETE TASKS TITLE:
+        self.delete_tasks_title = ctk.CTkLabel(master=self.delete_tasks_frame,
+                                               text="Delete Task",
+                                               font=DEFAULT_TITLE_FONT)
+        # DELETE TASKS CLOSE BUTTON:
+        self.delete_tasks_close_button = ctk.CTkButton(master=self.delete_tasks_frame,
+                                                       text="Back",
+                                                       font=DEFAULT_FONT,
+                                                       command=self.close_delete_tasks)
+
+        self.delete_tasks_frame.place(relx=0.5,
+                                      rely=0.5,
+                                      anchor='center')
+        self.delete_tasks_close_button.place(relx=0.5,
+                                             rely=0.9,
+                                             anchor='center')
+        self.delete_tasks_title.place(relx=0.5,
+                                      rely=0.1,
+                                      anchor='center')
+
+        
+
     # CLOSE DELETE TASKS:
     def close_delete_tasks(self):
-        pass
+        self.delete_tasks_frame.place_forget()
+        self.bring_back_menu()
 
 
     # OPEN SETTINGS AFTER HANDLE INPUT:

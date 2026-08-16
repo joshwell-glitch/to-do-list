@@ -207,17 +207,18 @@ class App(ctk.CTk):
                                               rely=0.5,
                                               anchor='center')
 
+        no_task = 0
         for task in self.loaded_tasks:
             checked_int = task["completed"]
             id_status = task["id"]
-            checked_tk_int = ctk.IntVar(value=checked_int)
+            print(f"{no_task}")
             self.label_task = ctk.CTkCheckBox(master=self.scrollable_frame_view_task,
                                               text=f"{task["name"]} : {task["description"]}",
                                               font=DEFAULT_FONT,
-                                              command=self.check,
-                                              variable=checked_tk_int)
+                                              command=lambda: self.check(no_task))
             self.label_task.pack(pady=3,
                                  anchor='w')
+            no_task += 1
 
         #VIEW TASKS BACK BUTTON:
         self.close_view_tasks_button = ctk.CTkButton(master=self.view_tasks_frame,
@@ -228,16 +229,15 @@ class App(ctk.CTk):
                                          rely=0.925,
                                          anchor='center')
 
-    def check(self):
-        checked = self.loaded_tasks
-        checked["completed"] = 1
-
-        if checked != 0:
-            print(f'true - variable: {checked}')
-        else:
-            print(f'false - varibale: {checked}')
-        with open(TASKS, 'w') as file:
-            json.dump(self.loaded_tasks, file)
+    def check(self, num):
+        checked = self.loaded_tasks[0]["completed"]
+        if num == self.loaded_tasks[0]["id"]:
+            print(f"Task is: {self.loaded_tasks["id"]}")
+            if checked != 0:
+                print(f'true - variable: {checked}')
+            else:
+                print(f'false - variable: {checked}')
+        self.tasks_manager.save_task(self.loaded_tasks)
 
     def close_view_tasks(self):
         self.view_tasks_frame.place_forget()

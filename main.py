@@ -273,14 +273,6 @@ class App(ctk.CTk):
 
         self.frame.place_forget()
 
-        # INFO:
-        self.created_by = ctk.CTkLabel(master=self.settings_frame,
-                                     text="Created by: Joshwell\n Created in: August 12, 2026",
-                                     font=DEFAULT_FONT)
-        self.created_by.place(relx=0.5, 
-                            rely=0.30,
-                            anchor='center')
-
         # SETTINGS TITLE LABEL:
         self.settings_label = ctk.CTkLabel(master=self.settings_frame, 
                                            text='Settings', 
